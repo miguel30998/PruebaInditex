@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: Inditex
+  datasource:
+    url: jdbc:h2:mem:inditex-db
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+    jpa:
+      spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+server:
+  port: 8084
+
+logging.level.org.springframework.web: DEBUG
+
+logging.level.org.hibernate: ERROR
+
+logging:
+  file:
+    name: C:/temp/application.log
