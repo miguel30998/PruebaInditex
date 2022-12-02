@@ -50,7 +50,7 @@ public class Prices {
         this.price = pricesDto.getPrice();
     }
     public Prices(PricesDao pricesDao){
-        this.iDProduct=pricesDao.getIDProduct();
+        this.iDProduct= String.valueOf(pricesDao.getIdProduct());
         this.price=pricesDao.getPrice();
         this.priceList=pricesDao.getPriceList();
         this.idBrand=pricesDao.getIdBrand();

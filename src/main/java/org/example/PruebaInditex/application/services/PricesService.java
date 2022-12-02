@@ -2,6 +2,7 @@ package org.example.PruebaInditex.application.services;
 
 
 import org.example.PruebaInditex.controller.dao.PricesDao;
+import org.example.PruebaInditex.controller.dto.GetDto;
 import org.example.PruebaInditex.controller.dto.PricesDto;
 import org.example.PruebaInditex.controller.repositories.PricesDaoRepository;
 import org.example.PruebaInditex.domain.core.Prices;
@@ -23,11 +24,12 @@ public class PricesService {
     @Autowired
     PricesDaoRepository pricesDaoRepository;
 
-    public List<PricesDto> getByDate(String stringDate) throws BadDateException {
-        List<PricesDao> pricesDaoList = pricesDaoRepository.findAll();
+    public List<PricesDto> getByDate(GetDto getDto) throws BadDateException {
+        List<PricesDao> pricesDaoList2=pricesDaoRepository.findAll();
+        List<PricesDao> pricesDaoList = pricesDaoRepository.findByIdBrandAndIdProduct(getDto.getBrandId(),getDto.getIdProduct());
         Date date = new Date();
         try {
-            date = dateConverse(stringDate);
+            date = dateConverse(getDto.getDate());
         } catch (BadDateException e) {
             throw new BadDateException("Bad date while conversion");
         }
@@ -39,9 +41,8 @@ public class PricesService {
 
 
     private Date dateConverse(String stringDate) throws BadDateException {
-        String pattern="yyyy-MM-dd-HH-mm-ss";
         try {
-            String patter = ("yyyy-MM-dd-HH-mm-ss");
+            String patter = ("yyyy-MM-dd-HH.mm.ss");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(patter);
             Date date = simpleDateFormat.parse(stringDate);
             return date;
@@ -50,7 +51,12 @@ public class PricesService {
         }
     }
     private List<PricesDao>getPricesBetweenDates(List<PricesDao> pricesDaoList,Date date){
-        return pricesDaoList.stream().filter(pricesDao -> pricesDao.getStartDate().after(date)&&pricesDao.getStartDate().before(date)).collect(Collectors.toList());
+        Date startDate=pricesDaoList.get(0).getStartDate();
+        Date endDate=pricesDaoList.get(0).getEndDate();
+        if(date.after(startDate)&&date.before(endDate)){
+            int cont=20;
+        }
+        return pricesDaoList.stream().filter(pricesDao -> date.before(pricesDao.getEndDate())&&date.after(pricesDao.getStartDate())).collect(Collectors.toList());
     }
 
     private List<Prices>daoToDomain(List<PricesDao>pricesDaoList){

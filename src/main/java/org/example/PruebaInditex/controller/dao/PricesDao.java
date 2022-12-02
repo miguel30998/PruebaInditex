@@ -23,7 +23,7 @@ public class PricesDao {
     String idBrand;
     @Id
     @Column(name = "PRODUCT_ID")
-    int iDProduct;
+    int idProduct;
     @Column(name = "START_DATE")
     Date startDate;
     @Column(name = "END_DATE")
