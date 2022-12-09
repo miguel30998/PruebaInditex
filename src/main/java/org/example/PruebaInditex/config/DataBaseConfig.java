@@ -67,7 +67,7 @@ public class DataBaseConfig {
                     .price(38.95f)
                     .curr("EUR")
                     .build();
-            pricesDaoRepository.saveAllAndFlush(List.of(pricesDao1,pricesDao2,pricesDao3,pricesDao4));
+            pricesDaoRepository.saveAllAndFlush(List.of(pricesDao4,pricesDao2,pricesDao3,pricesDao1));
 
         };
     }

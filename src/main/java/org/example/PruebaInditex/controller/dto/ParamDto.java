@@ -5,7 +5,7 @@ import lombok.Getter;
 
 
 @Getter
-public class GetDto {
+public class ParamDto {
 
     @JsonProperty(value = "date")
     String Date;

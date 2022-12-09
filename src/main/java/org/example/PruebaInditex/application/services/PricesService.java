@@ -2,7 +2,7 @@ package org.example.PruebaInditex.application.services;
 
 
 import org.example.PruebaInditex.controller.dao.PricesDao;
-import org.example.PruebaInditex.controller.dto.GetDto;
+import org.example.PruebaInditex.controller.dto.ParamDto;
 import org.example.PruebaInditex.controller.dto.PricesDto;
 import org.example.PruebaInditex.controller.repositories.PricesDaoRepository;
 import org.example.PruebaInditex.domain.core.Prices;
@@ -24,12 +24,11 @@ public class PricesService {
     @Autowired
     PricesDaoRepository pricesDaoRepository;
 
-    public List<PricesDto> getByDate(GetDto getDto) throws BadDateException {
-        List<PricesDao> pricesDaoList2=pricesDaoRepository.findAll();
-        List<PricesDao> pricesDaoList = pricesDaoRepository.findByIdBrandAndIdProduct(getDto.getBrandId(),getDto.getIdProduct());
+    public List<PricesDto> getByDate(ParamDto paramDto) throws BadDateException {
+        List<PricesDao> pricesDaoList = pricesDaoRepository.findByIdBrandAndIdProduct(paramDto.getBrandId(), paramDto.getIdProduct());
         Date date = new Date();
         try {
-            date = dateConverse(getDto.getDate());
+            date = dateConverse(paramDto.getDate());
         } catch (BadDateException e) {
             throw new BadDateException("Bad date while conversion");
         }
@@ -51,11 +50,6 @@ public class PricesService {
         }
     }
     private List<PricesDao>getPricesBetweenDates(List<PricesDao> pricesDaoList,Date date){
-        Date startDate=pricesDaoList.get(0).getStartDate();
-        Date endDate=pricesDaoList.get(0).getEndDate();
-        if(date.after(startDate)&&date.before(endDate)){
-            int cont=20;
-        }
         return pricesDaoList.stream().filter(pricesDao -> date.before(pricesDao.getEndDate())&&date.after(pricesDao.getStartDate())).collect(Collectors.toList());
     }
 

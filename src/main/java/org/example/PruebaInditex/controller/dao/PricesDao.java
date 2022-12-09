@@ -5,10 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "PRICES")
@@ -17,15 +15,18 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PricesDao {
+@IdClass(PricesIdClass.class)
+public class PricesDao implements Serializable {
 
     @Column(name = "BRAND_ID")
     String idBrand;
     @Id
     @Column(name = "PRODUCT_ID")
     int idProduct;
+    @Id
     @Column(name = "START_DATE")
     Date startDate;
+    @Id
     @Column(name = "END_DATE")
     Date endDate;
     @Column(name = "PRICE_LIST")
