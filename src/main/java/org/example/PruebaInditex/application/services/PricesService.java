@@ -7,12 +7,14 @@ import org.example.PruebaInditex.controller.dto.PricesDto;
 import org.example.PruebaInditex.controller.repositories.PricesDaoRepository;
 import org.example.PruebaInditex.domain.core.Prices;
 import org.example.PruebaInditex.domain.exceptions.BadDateException;
+import org.example.PruebaInditex.domain.exceptions.NoElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,8 +26,12 @@ public class PricesService {
     @Autowired
     PricesDaoRepository pricesDaoRepository;
 
+    @Autowired
+    MapperService mapperService;
+
     public List<PricesDto> getByDate(ParamDto paramDto) throws BadDateException {
         List<PricesDao> pricesDaoList = pricesDaoRepository.findByIdBrandAndIdProduct(paramDto.getBrandId(), paramDto.getIdProduct());
+        PricesDao pricesDao= new PricesDao();
         Date date = new Date();
         try {
             date = dateConverse(paramDto.getDate());
@@ -33,11 +39,15 @@ public class PricesService {
             throw new BadDateException("Bad date while conversion");
         }
         pricesDaoList = getPricesBetweenDates(pricesDaoList, date);
-        List<Prices> pricesList = daoToDomain(pricesDaoList);
-        return dtoToDomain(pricesList);
+        pricesDaoList = getTheHighestPriority(pricesDaoList);
+        List<Prices> pricesList = mapperService.daoToDomain(pricesDaoList);
+        return mapperService.dtoToDomain(pricesList);
 
     }
 
+    private List<PricesDao> getTheHighestPriority(List<PricesDao> pricesDaoList) {
+        return pricesDaoList.stream().max(Comparator.comparing(PricesDao::getPriority)).stream().collect(Collectors.toList());
+    }
 
     private Date dateConverse(String stringDate) throws BadDateException {
         try {
@@ -53,28 +63,6 @@ public class PricesService {
         return pricesDaoList.stream().filter(pricesDao -> date.before(pricesDao.getEndDate())&&date.after(pricesDao.getStartDate())).collect(Collectors.toList());
     }
 
-    private List<Prices>daoToDomain(List<PricesDao>pricesDaoList){
-        List<Prices>pricesList= new ArrayList<>();
-        for (PricesDao pricesDao : pricesDaoList) {
-            Prices prices =new Prices(pricesDao);
-            pricesList.add(prices);
-        }
-        return pricesList;
-    }
-    private List<PricesDto>dtoToDomain(List<Prices>pricesList){
-        List<PricesDto>pricesDtoList= new ArrayList<>();
-       pricesList.forEach(prices -> pricesDtoList.add(PricesDto.builder()
-               .price(prices.getPrice())
-               .endDate(prices.getEndDate().toString())
-               .startDate(prices.getStartDate().toString())
-               .idBrand(prices.getIdBrand())
-               .iDProduct(prices.getIDProduct())
-               .priceList(prices.getPriceList())
-               .curr(prices.getCurr())
-               .priority(prices.getPriority())
-               .build()));
-       return pricesDtoList;
-    }
 }
 
 

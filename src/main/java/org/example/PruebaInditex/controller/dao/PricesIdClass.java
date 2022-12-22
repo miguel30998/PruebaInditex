@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class PricesIdClass implements Serializable {
 
+    Integer priceList;
     Date startDate;
     Date endDate;
     Integer idProduct;

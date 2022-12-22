@@ -18,7 +18,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/prices/")
-public class GetEndPoints {
+public class PricesEndPoints {
 
     @Autowired
     PricesService pricesService;
